@@ -39,9 +39,9 @@ namespace yuzhakov {
       if (s1 < s2 && s2 > s3) {
         c7++;
       }
-      long long a = s1;
-      long long b = s2;
-      long long c = s3;
+      long long const a = s1;
+      long long const b = s2;
+      long long const c = s3;
       if ((c * c - b * b) == a * a) {
         c13++;
       }
