@@ -1,6 +1,5 @@
 #include <iostream>
 namespace yuzhakov {
-  using ll = long long;
   using ull = unsigned long long;
   constexpr int calculate_error = 2;
   constexpr int invalid_input = 1;
@@ -40,9 +39,9 @@ namespace yuzhakov {
       if (s1 < s2 && s2 > s3) {
         c7++;
       }
-      ll a = s1;
-      ll b = s2;
-      ll c = s3;
+      long long a = s1;
+      long long b = s2;
+      long long c = s3;
       if ((c * c - b * b) == a * a) {
         c13++;
       }
