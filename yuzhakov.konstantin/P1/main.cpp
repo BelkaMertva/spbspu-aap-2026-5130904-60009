@@ -1,6 +1,7 @@
 #include <iostream>
+#include <limits>
+
 namespace yuzhakov {
-  using ull = unsigned long long;
   constexpr int calculate_error = 2;
   constexpr int invalid_input = 1;
   constexpr int success = 0;
@@ -29,7 +30,8 @@ namespace yuzhakov {
       return success;
     }
 
-    ull c7 = 0, c13 = 0;
+    constexpr unsigned long long max_count = std::numeric_limits< unsigned long long >::max();
+    unsigned long long c7 = 0, c13 = 0;
     int s3 = 0;
 
     while (std::cin >> s3) {
@@ -37,12 +39,20 @@ namespace yuzhakov {
         break;
       }
       if (s1 < s2 && s2 > s3) {
+        if (c7 == max_count) {
+          std::cerr << "c7 overflow" << "\n";
+          return calculate_error;
+        }
         c7++;
       }
       long long const a = s1;
       long long const b = s2;
       long long const c = s3;
       if ((c * c - b * b) == a * a) {
+        if (c13 == max_count) {
+          std::cerr << "c13 overflow" << "\n";
+          return calculate_error;
+        }
         c13++;
       }
       s1 = s2;
@@ -59,6 +69,7 @@ namespace yuzhakov {
     return success;
   }
 }
+
 int main()
 {
   return yuzhakov::p1();
