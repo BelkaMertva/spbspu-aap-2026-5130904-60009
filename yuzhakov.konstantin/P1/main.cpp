@@ -1,73 +1,164 @@
+#include <cctype>
+#include <exception>
 #include <iostream>
 #include <limits>
+#include <stdexcept>
 
 namespace yuzhakov {
   constexpr int calculate_error = 2;
   constexpr int invalid_input = 1;
   constexpr int success = 0;
+  constexpr unsigned long long max_count = std::numeric_limits< unsigned long long >::max();
 
-  int p1()
-  {
-    int s1 = 0;
-    if (!(std::cin >> s1)) {
-      std::cerr << "invalid input" << "\n";
-      return invalid_input;
-    }
-    if (s1 == 0) {
-      std::cout << "0" << "\n";
-      std::cerr << "calculate error" << "\n";
-      return calculate_error;
-    }
+  class LocalMaxCounter {
+  public:
+    LocalMaxCounter();
+    void operator()(int next) noexcept;
+    unsigned long long operator()() const;
+  private:
+    int s1_;
+    int s2_;
+    unsigned int size_;
+    unsigned long long count_;
+    bool overflow_;
+  };
 
-    int s2 = 0;
-    if (!(std::cin >> s2)) {
-      std::cerr << "invalid input" << "\n";
-      return invalid_input;
-    }
-    if (s2 == 0) {
-      std::cout << "0" << "\n";
-      std::cout << "0" << "\n";
-      return success;
-    }
+  class PythagoreanCounter {
+  public:
+    PythagoreanCounter();
+    void operator()(int next) noexcept;
+    unsigned long long operator()() const;
+  private:
+    int s1_;
+    int s2_;
+    unsigned int size_;
+    unsigned long long count_;
+    bool overflow_;
+  };
 
-    constexpr unsigned long long max_count = std::numeric_limits< unsigned long long >::max();
-    unsigned long long c7 = 0, c13 = 0;
-    int s3 = 0;
+  bool readNumber(int &value);
+  int p1();
+}
 
-    while (std::cin >> s3) {
-      if (s3 == 0) {
-        break;
-      }
-      if (s1 < s2 && s2 > s3) {
-        if (c7 == max_count) {
-          std::cerr << "c7 overflow" << "\n";
-          return calculate_error;
-        }
-        c7++;
-      }
-      long long const a = s1;
-      long long const b = s2;
-      long long const c = s3;
-      if ((c * c - b * b) == a * a) {
-        if (c13 == max_count) {
-          std::cerr << "c13 overflow" << "\n";
-          return calculate_error;
-        }
-        c13++;
-      }
-      s1 = s2;
-      s2 = s3;
+yuzhakov::LocalMaxCounter::LocalMaxCounter():
+  s1_(0),
+  s2_(0),
+  size_(0),
+  count_(0),
+  overflow_(false)
+{}
+
+void yuzhakov::LocalMaxCounter::operator()(int next) noexcept
+{
+  if (size_ == 2 && s1_ < s2_ && s2_ > next) {
+    if (count_ == max_count) {
+      overflow_ = true;
+    } else {
+      ++count_;
     }
-
-    if (!(std::cin)) {
-      std::cerr << "invalid input" << "\n";
-      return invalid_input;
-    }
-
-    std::cout << c7 << "\n";
-    std::cout << c13 << "\n";
-    return success;
   }
+  s1_ = s2_;
+  s2_ = next;
+  if (size_ < 2) {
+    ++size_;
+  }
+}
+
+unsigned long long yuzhakov::LocalMaxCounter::operator()() const
+{
+  if (size_ == 0) {
+    throw std::logic_error("c7: empty sequence");
+  }
+  if (overflow_) {
+    throw std::overflow_error("c7 overflow");
+  }
+  return count_;
+}
+
+yuzhakov::PythagoreanCounter::PythagoreanCounter():
+  s1_(0),
+  s2_(0),
+  size_(0),
+  count_(0),
+  overflow_(false)
+{}
+
+void yuzhakov::PythagoreanCounter::operator()(int next) noexcept
+{
+  if (size_ == 2) {
+    long long const a = s1_;
+    long long const b = s2_;
+    long long const c = next;
+    if (c * c - b * b == a * a) {
+      if (count_ == max_count) {
+        overflow_ = true;
+      } else {
+        ++count_;
+      }
+    }
+  }
+  s1_ = s2_;
+  s2_ = next;
+  if (size_ < 2) {
+    ++size_;
+  }
+}
+
+unsigned long long yuzhakov::PythagoreanCounter::operator()() const
+{
+  if (overflow_) {
+    throw std::overflow_error("c13 overflow");
+  }
+  return count_;
+}
+
+bool yuzhakov::readNumber(int &value)
+{
+  if (!(std::cin >> value)) {
+    return false;
+  }
+  if (std::cin.eof()) {
+    return true;
+  }
+  int const next = std::cin.peek();
+  if (std::cin.bad()) {
+    return false;
+  }
+  return std::cin.eof() || std::isspace(static_cast< unsigned char >(next));
+}
+
+int yuzhakov::p1()
+{
+  LocalMaxCounter c7;
+  PythagoreanCounter c13;
+  int value = 0;
+
+  while (true) {
+    if (!readNumber(value)) {
+      std::cerr << "invalid input" << '\n';
+      return invalid_input;
+    }
+    if (value == 0) {
+      break;
+    }
+    c7(value);
+    c13(value);
+  }
+
+  int result = success;
+  try {
+    std::cout << c7() << '\n';
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    result = calculate_error;
+  }
+  try {
+    std::cout << c13() << '\n';
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << '\n';
+    result = calculate_error;
+  }
+  return result;
 }
 
 int main()
