@@ -4,7 +4,6 @@
 #include <limits>
 #include <stdexcept>
 
-
 namespace yuzhakov {
   char *readLine(std::istream &in, size_t *length);
   char *commonSymbols(char *result, const char *first, const char *second) noexcept;
@@ -50,8 +49,7 @@ char *yuzhakov::readLine(std::istream &in, size_t *const length)
   }
 }
 
-char *yuzhakov::commonSymbols(char *const result, const char *const first,
-    const char *const second) noexcept
+char *yuzhakov::commonSymbols(char *const result, const char *const first, const char *const second) noexcept
 {
   size_t position = 0;
   for (size_t i = 0; first[i] != '\0'; ++i) {
