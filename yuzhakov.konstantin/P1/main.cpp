@@ -44,8 +44,7 @@ namespace yuzhakov {
         if (s1 < s2 && s2 > s3) {
           if (c7 == max_count) {
             c7_overflow = true;
-          }
-          else {
+          } else {
             c7++;
           }
         }
@@ -57,8 +56,7 @@ namespace yuzhakov {
         if ((c * c - b * b) == a * a) {
           if (c13 == max_count) {
             c13_overflow = true;
-          }
-          else {
+          } else {
             c13++;
           }
         }
@@ -73,14 +71,12 @@ namespace yuzhakov {
     }
     if (c7_overflow) {
       std::cerr << "c7 overflow" << "\n";
-    }
-    else {
+    } else {
       std::cout << c7 << "\n";
     }
     if (c13_overflow) {
       std::cerr << "c13 overflow" << "\n";
-    }
-    else {
+    } else {
       std::cout << c13 << "\n";
     }
     if (c7_overflow || c13_overflow) {
